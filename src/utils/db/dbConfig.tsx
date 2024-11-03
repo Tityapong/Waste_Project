@@ -1,12 +1,16 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 
-// Initialize connection using DATABASE_URL with non-null assertion
-const sql = neon(process.env.DATABASE_URL!);
+// Check if DATABASE_URL exists
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error('DATABASE_URL is not defined');
+}
 
-// Initialize drizzle with the SQL connection and schema
-const db = drizzle(sql, { schema });
+// Initialize connection and drizzle instance
+const sql = neon(databaseUrl);
+export const db = drizzle(sql, { schema });
